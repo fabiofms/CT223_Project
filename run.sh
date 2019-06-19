@@ -1,0 +1,1 @@
+python3 TextClassificationMultinomialNB.py > output1.py

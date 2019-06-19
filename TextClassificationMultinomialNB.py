@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
-
+import sys
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 
 df = pd.read_csv('training.1600000.processed.noemoticon.csv', sep=',', encoding='latin-1')
@@ -40,33 +41,48 @@ from sklearn.model_selection import train_test_split
 X = df['text']
 y = df['target']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
+chart_x = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+chart_y_train = []
+chart_y_test = []
+for test_size in chart_x:
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
-# Naïve Bayes:
-text_clf_nb = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(1,1))),
-                     ('clf', MultinomialNB()),
-])
+    from sklearn.pipeline import Pipeline
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.naive_bayes import MultinomialNB
+
+    # Naïve Bayes:
+    text_clf_nb = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(1, 1))), ('clf', MultinomialNB()),
+    ])
 
 
-text_clf_nb.fit(X_train, y_train)
+    text_clf_nb.fit(X_train, y_train)
 
-# Form a prediction set
-predictions = text_clf_nb.predict(X_test)
-predictionsTrain = text_clf_nb.predict(X_train)
+    # Form a prediction set
+    predictions = text_clf_nb.predict(X_test)
+    predictionsTrain = text_clf_nb.predict(X_train)
 
-# Report the confusion matrix
-from sklearn import metrics
-print(metrics.confusion_matrix(y_test,predictions))
+    # Report the confusion matrix
+    from sklearn import metrics
+    print(metrics.confusion_matrix(y_test,predictions))
 
-# Print a classification report
-print(metrics.classification_report(y_test,predictions))
+    # Print a classification report
+    print(metrics.classification_report(y_test,predictions))
 
-# Print the overall accuracy
-print('Acuracia do teste:')
-print(metrics.accuracy_score(y_test,predictions))
-print('Acuracia do treino:')
-print(metrics.accuracy_score(y_train,predictionsTrain))
+    # Print the overall accuracy
+    # print('Acuracia do teste:')
+    # print(metrics.accuracy_score(y_test,predictions))
+    # print('Acuracia do treino:')
+    # print(metrics.accuracy_score(y_train,predictionsTrain))
+    chart_y_train.append(metrics.accuracy_score(y_train,predictionsTrain))
+    chart_y_test.append(metrics.accuracy_score(y_test,predictions))
+
+plt.plot(chart_x, chart_y_train, color='g')
+plt.plot(chart_x, chart_y_test, color='orange')
+plt.xlabel('test size')
+plt.ylabel('accuracy')
+title = 'Multinomial Naive Bayes perfomance - ngram_range=(1, 1).jpg'
+plt.title('Multinomial Naive Bayes perfomance - ngram_range=(1, 1)')
+# plt.show()
+plt.savefig('multinomialNB.jpg')
