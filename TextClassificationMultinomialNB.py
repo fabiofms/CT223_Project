@@ -53,7 +53,7 @@ for test_size in chart_x:
     from sklearn.naive_bayes import MultinomialNB
 
     # Naïve Bayes:
-    text_clf_nb = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(1, 3))), ('clf', MultinomialNB()),
+    text_clf_nb = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(2, 3))), ('clf', MultinomialNB()),
     ])
 
 
@@ -82,6 +82,6 @@ plt.plot(chart_x, chart_y_train, color='g')
 plt.plot(chart_x, chart_y_test, color='orange')
 plt.xlabel('test size')
 plt.ylabel('accuracy')
-plt.title('Multinomial Naive Bayes perfomance - ngram_range=(1, 3)')
+plt.title('Multinomial Naive Bayes perfomance - ngram_range=(2, 3)')
 # plt.show()
-plt.savefig('multinomialNB13.jpg')
+plt.savefig('multinomialNB23.jpg')
